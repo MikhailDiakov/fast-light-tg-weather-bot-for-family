@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from app.storage import get_user_data
 
-LOCAL_TZ = timezone(timedelta(hours=3))
+LOCAL_TZ = ZoneInfo("Europe/Kiev")
 
 
 def get_greeting(user_id: int) -> str:
@@ -10,11 +11,13 @@ def get_greeting(user_id: int) -> str:
     name = user_data.get("name", "друже")
 
     hour = datetime.now(LOCAL_TZ).hour
-    if hour < 12:
+    if 5 <= hour < 12:
         part = "Доброго ранку"
-    elif hour < 18:
+    elif 12 <= hour < 18:
         part = "Доброго дня"
-    else:
+    elif 18 <= hour < 23:
         part = "Доброго вечора"
+    else:
+        part = "Доброї ночі"
 
     return f"{part}, {name}!"

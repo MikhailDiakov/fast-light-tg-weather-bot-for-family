@@ -81,3 +81,43 @@ async def generate_full_weather_report(
 
     except Exception as e:
         return f"⚠️ Непередбачувана помилка: {str(e)}"
+
+
+async def generate_short_ai_weather_report(
+    user_id, forecast_points, current_weather
+) -> str:
+    greeting = get_greeting(user_id)
+
+    forecast_block = ""
+    for point in forecast_points[:4]:
+        time = point["time"][11:16]
+        forecast_block += (
+            f"{time}: {point['description'].capitalize()}, "
+            f"{point['temp']}°C, відчувається як {point['feels_like']}°C, "
+            f"вітер {point['wind_speed']} м/с, "
+            f"опади: {int(point['pop'] * 100)}%\n"
+        )
+
+    prompt = (
+        f"{greeting}\n\n"
+        f"Зараз за вікном:\n{current_weather}\n\n"
+        f"Прогноз на найближчі години:\n{forecast_block}\n"
+        "Напиши коротко і зрозуміло, без зірочок, форматування чи емодзі, у вигляді простого тексту:\n"
+        "- Яка зараз температура і як вона відчувається\n"
+        "- Що очікувати у найближчі години (коротко по прогнозу)\n"
+    )
+
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+    headers = {
+        "Content-Type": "application/json",
+        "X-goog-api-key": API_KEY_AI,
+    }
+    json_data = {"contents": [{"parts": [{"text": prompt}]}]}
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        response = await client.post(url, headers=headers, json=json_data)
+        response.raise_for_status()
+        data = response.json()
+
+    raw_text = data["candidates"][0]["content"]["parts"][0]["text"]
+    return raw_text.strip()
