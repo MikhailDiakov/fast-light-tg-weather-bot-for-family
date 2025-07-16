@@ -14,20 +14,23 @@ def location_request_kb():
 def change_kb():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Змінити місто 🏙")],
-            [KeyboardButton(text="Змінити час ⏰")],
+            [
+                KeyboardButton(text="Змінити місто 🏙"),
+                KeyboardButton(text="Змінити час ⏰"),
+            ],
+            [KeyboardButton(text="Назад ⬅️")],
         ],
         resize_keyboard=True,
         one_time_keyboard=True,
     )
 
 
-def main_menu_kb():
+def settings_kb():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Показати погоду зараз 🌤")],
+            [KeyboardButton(text="Мої налаштування 📋")],
             [KeyboardButton(text="Змінити налаштування ⚙️")],
-            [KeyboardButton(text="Дізнатись місто 🏙️")],
+            [KeyboardButton(text="Назад ⬅️")],
         ],
         resize_keyboard=True,
     )

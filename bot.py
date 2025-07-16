@@ -8,11 +8,9 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from app.config import TELEGRAM_TOKEN
 from app.handlers import router
 from app.scheduler import setup_scheduler
-from keep_alive import keep_alive
 
 
 async def main():
-    keep_alive()
     bot = Bot(
         token=TELEGRAM_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )

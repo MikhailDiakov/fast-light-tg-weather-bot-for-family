@@ -1,28 +1,19 @@
 import json
 from pathlib import Path
 
-from cryptography.fernet import Fernet
-
-from app.config import SECRET_KEY
-
 DATA_FILE = Path("user_data.json")
-fernet = Fernet(SECRET_KEY)
 
 
 def load_data() -> dict:
     if not DATA_FILE.exists():
         return {}
-    with open(DATA_FILE, "rb") as f:
-        encrypted = f.read()
-    decrypted = fernet.decrypt(encrypted)
-    return json.loads(decrypted.decode("utf-8"))
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def save_data(data: dict):
-    json_bytes = json.dumps(data, ensure_ascii=False).encode("utf-8")
-    encrypted = fernet.encrypt(json_bytes)
-    with open(DATA_FILE, "wb") as f:
-        f.write(encrypted)
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def save_user_data(

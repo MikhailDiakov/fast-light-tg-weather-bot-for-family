@@ -22,6 +22,3 @@ else:
 
 # admin id
 ADMIN_ID = int(os.getenv("ADMIN_ID"))
-
-# secret key
-SECRET_KEY = os.getenv("SECRET_KEY")

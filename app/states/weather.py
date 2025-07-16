@@ -1,7 +1,7 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class Form(StatesGroup):
+class WeatherForm(StatesGroup):
     city = State()
     time = State()
     choice = State()

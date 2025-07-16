@@ -1,56 +1,71 @@
-# 🌤️ Telegram Weather Bot for Family 🌤️
+# 🌤️ Telegram Weather Bot for Family
 
-This bot is designed exclusively for users listed in `ALLOWED_USERS`.  
-Every user can find out their Telegram ID by sending the command `/myid`.
-
-## Usage
-
-- `/start` — send your location and specify the time when the bot will send you a funny weather message with interesting facts and tips.
-
-- **Показати погоду зараз** button — generates an instant weather report combining data from multiple APIs plus AI-generated commentary (not scheduled, but on demand).
-
-- **Змінити налаштування** — allows you to change your city and notification time.
-
-- **Дізнатися місто** — based on your location coordinates, the bot tells you the name of your city.
-
-## Admin commands
-
-- `/list_users` — shows all users and their saved data.
-
-- `/edit_user ID` — lets the admin update a user's name and notes, so AI can personalize messages better.
+> A private bot made for our family — delivers fun weather reports, birthday reminders, and more!
 
 ---
 
-This bot was quickly built for family use!
+## 📌 What the bot can do
 
-`keep_alive` and Flask are included for deployment on Replit and uptime monitoring with UptimeRobot.
+🕒 **Sends daily messages**  
+At your chosen time, the bot sends a warm message with:
+
+- Current weather (including "feels like", wind, etc.)
+- Clothing tips
+- A funny fact
+- AI-generated weather commentary 🌦️
+
+⚡ **Show current weather**  
+A button for instantly getting the latest weather and a witty AI comment.
+
+🏙 **Change city / notification time**  
+Update your city or when you get daily messages.
+
+📍 **Get city from location**  
+Send your location and the bot will tell you your city name.
+
+🎉 **Birthday service**
+
+- Add / remove / view birthdays
+- Every morning, the bot announces if someone has a birthday today 🎂
 
 ---
 
-## Deployment
+## 👤 Usage
 
-### 1. Using Docker
+| Command / Button         | Description                                                                | Access Level                         |
+| ------------------------ | -------------------------------------------------------------------------- | ------------------------------------ |
+| `/start` and etc buttons | Begin setup: choose your city and notification time, settings, all service | ✅ Only for family (`ALLOWED_USERS`) |
+| `/myid`                  | Get your Telegram ID (for admin use or requesting access)                  | ✅ Everyone                          |
 
-Build your Docker image with:
+---
+
+## 🛠 Admin Commands
+
+> 🔐 Only available for the `ADMIN_ID` (not all allowed users)
+
+| Command         | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `/list_users`   | Show all users and their saved settings                  |
+| `/edit_user ID` | Update a user’s name or notes to personalize AI messages |
+
+---
+
+## 🚀 Deployment
+
+### 📦 Docker
+
+1. **Build the Docker image:**
 
 ```bash
 docker build -t myweatherbot .
 ```
 
-Run the container with environment variables from a file:
+2. **Run with environment variables from a file:**
 
 ```bash
 docker run --rm --env-file .env myweatherbot
-
 ```
 
-### 2. Using Replit
+---
 
-Upload all your project files manually to Replit.
-
-Add your environment variables (like your bot token and other secrets) to the Secrets tab in Replit.
-For example, add variables like TELEGRAM_TOKEN, WEATHER_API_KEY, API_KEY_AI, ADMIN_ID etc.
-
-Click the Run button to start your bot.
-
-This setup keeps your secrets safe and your bot running smoothly.
+👨‍👩‍👧‍👦 This bot was quickly built with love, just for our family ❤️
