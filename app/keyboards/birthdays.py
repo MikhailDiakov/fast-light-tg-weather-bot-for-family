@@ -11,3 +11,11 @@ def birthday_menu_kb():
         ],
         resize_keyboard=True,
     )
+
+
+def back_only_kb():
+    return ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="Назад ⬅️")]],
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )

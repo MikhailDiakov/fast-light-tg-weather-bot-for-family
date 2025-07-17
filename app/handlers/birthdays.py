@@ -1,7 +1,7 @@
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-from app.keyboards import birthday_menu_kb
+from app.keyboards import back_only_kb, birthday_menu_kb
 from app.states import BirthdayState
 from app.storage import add_birthday, delete_birthday, get_all_birthdays
 from app.utils.checker import is_family_member
@@ -28,22 +28,34 @@ async def add_birthday_start(message: types.Message, state: FSMContext):
         return
 
     await state.set_state(BirthdayState.name)
-    await message.answer("Введіть імʼя:")
+    await message.answer("Введіть імʼя:", reply_markup=back_only_kb())
 
 
 @router.message(BirthdayState.name)
 async def add_birthday_name(message: types.Message, state: FSMContext):
+    if message.text == "Назад ⬅️":
+        await state.clear()
+        await birthday_menu(message)
+        return
+
     if not is_family_member(message.from_user.id):
         await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
         return
 
     await state.update_data(name=message.text)
     await state.set_state(BirthdayState.date)
-    await message.answer("Введіть дату народження у форматі ДД.ММ.РРРР:")
+    await message.answer(
+        "Введіть дату народження у форматі ДД.ММ.РРРР:", reply_markup=back_only_kb()
+    )
 
 
 @router.message(BirthdayState.date)
 async def add_birthday_date(message: types.Message, state: FSMContext):
+    if message.text == "Назад ⬅️":
+        await state.clear()
+        await birthday_menu(message)
+        return
+
     if not is_family_member(message.from_user.id):
         await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
         return
@@ -51,7 +63,8 @@ async def add_birthday_date(message: types.Message, state: FSMContext):
     date = message.text
     if not is_valid_date_format(date):
         await message.answer(
-            "❌ Невірний формат дати або неіснуюча дата. Введіть дату у форматі ДД.ММ.РРРР, наприклад, 15.07.1990"
+            "❌ Невірний формат дати або неіснуюча дата. Введіть дату у форматі ДД.ММ.РРРР, наприклад, 15.07.1990",
+            reply_markup=back_only_kb(),
         )
         return
 
@@ -60,11 +73,13 @@ async def add_birthday_date(message: types.Message, state: FSMContext):
     success = add_birthday(name, date)
     if not success:
         await message.answer(
-            f"❌ Ім'я '{name}' вже є у списку. Використайте інше ім'я."
+            f"❌ Ім'я '{name}' вже є у списку. Використайте інше ім'я.",
+            reply_markup=back_only_kb(),
         )
         await state.clear()
         await birthday_menu(message)
         return
+
     await message.answer(f"✅ Додано: {name} — {date}")
     await state.clear()
     await birthday_menu(message)
@@ -92,11 +107,16 @@ async def delete_birthday_prompt(message: types.Message, state: FSMContext):
         return
 
     await state.set_state(BirthdayState.delete_name)
-    await message.answer("Введіть імʼя для видалення:")
+    await message.answer("Введіть імʼя для видалення:", reply_markup=back_only_kb())
 
 
 @router.message(BirthdayState.delete_name)
 async def delete_birthday_name(message: types.Message, state: FSMContext):
+    if message.text == "Назад ⬅️":
+        await state.clear()
+        await birthday_menu(message)
+        return
+
     if not is_family_member(message.from_user.id):
         await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
         return

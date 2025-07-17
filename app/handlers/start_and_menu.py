@@ -1,7 +1,7 @@
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-from app.keyboards import location_request_kb, services_kb, settings_kb
+from app.keyboards import location_request_kb_no_back, services_kb, settings_kb
 from app.states import WeatherForm
 from app.utils.checker import is_family_member
 
@@ -19,7 +19,7 @@ async def cmd_start(message: types.Message, state: FSMContext):
     await state.update_data(action="new")
     await message.answer(
         "Привіт! Надішли, будь ласка, свою геолокацію 📍",
-        reply_markup=location_request_kb(),
+        reply_markup=location_request_kb_no_back(),
     )
 
 

@@ -2,7 +2,13 @@ from aiogram import F, Router, types
 from aiogram.filters import StateFilter, or_f
 from aiogram.fsm.context import FSMContext
 
-from app.keyboards import change_kb, location_request_kb, main_menu_kb, remove_kb
+from app.keyboards import (
+    change_kb,
+    location_request_kb_with_back,
+    main_menu_kb,
+    remove_kb,
+    time_change_kb,
+)
 from app.states import EditUserStates, WeatherForm
 from app.storage import get_user_data, save_user_data, user_exists
 from app.utils.checker import is_family_member
@@ -59,7 +65,7 @@ async def change_city(message: types.Message, state: FSMContext):
     await state.set_state(WeatherForm.city)
     await state.update_data(action="change")
     await message.answer(
-        "📍 Надішли нову геолокацію:", reply_markup=location_request_kb()
+        "📍 Надішли нову геолокацію:", reply_markup=location_request_kb_with_back()
     )
 
 
@@ -72,7 +78,7 @@ async def change_time(message: types.Message, state: FSMContext):
     await state.set_state(WeatherForm.time)
     await message.answer(
         "🕒 Введи новий час сповіщення (наприклад, 08:00):",
-        reply_markup=remove_kb(),
+        reply_markup=time_change_kb(),
     )
 
 
@@ -113,7 +119,35 @@ async def process_location(message: types.Message, state: FSMContext):
         )
 
 
-@router.message(WeatherForm.city)
+@router.message(
+    F.text == "Назад ⬅️",
+    or_f(
+        StateFilter(None),
+        StateFilter(WeatherForm.city),
+        StateFilter(WeatherForm.choice),
+        StateFilter(WeatherForm.time),
+        StateFilter(EditUserStates.waiting_for_new_data),
+    ),
+)
+async def back_handler(message: types.Message, state: FSMContext):
+    if not is_family_member(message.from_user.id):
+        await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
+        return
+
+    await state.clear()
+    await message.answer("📲 Повертаємось у головне меню:", reply_markup=main_menu_kb())
+
+
+@router.message(WeatherForm.choice)
+async def invalid_choice(message: types.Message):
+    if not is_family_member(message.from_user.id):
+        await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
+        return
+
+    await message.answer("❌ Обери опцію з меню.", reply_markup=change_kb())
+
+
+@router.message(WeatherForm.city, ~F.location)
 async def process_city_invalid(message: types.Message):
     if not is_family_member(message.from_user.id):
         await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
@@ -121,7 +155,7 @@ async def process_city_invalid(message: types.Message):
 
     await message.answer(
         "Будь ласка, надсилай лише геолокацію 📍, не вводь місто текстом.",
-        reply_markup=location_request_kb(),
+        reply_markup=location_request_kb_with_back(),
     )
 
 
@@ -178,31 +212,3 @@ async def process_time(message: types.Message, state: FSMContext):
         reply_markup=main_menu_kb(),
     )
     await state.clear()
-
-
-@router.message(
-    F.text == "Назад ⬅️",
-    or_f(
-        StateFilter(None),
-        StateFilter(WeatherForm.city),
-        StateFilter(WeatherForm.choice),
-        StateFilter(WeatherForm.time),
-        StateFilter(EditUserStates.waiting_for_new_data),
-    ),
-)
-async def back_handler(message: types.Message, state: FSMContext):
-    if not is_family_member(message.from_user.id):
-        await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
-        return
-
-    await state.clear()
-    await message.answer("📲 Повертаємось у головне меню:", reply_markup=main_menu_kb())
-
-
-@router.message(WeatherForm.choice)
-async def invalid_choice(message: types.Message):
-    if not is_family_member(message.from_user.id):
-        await message.answer("⛔️ Бот доступний лише для нашої родини ❤️")
-        return
-
-    await message.answer("❌ Обери опцію з меню.", reply_markup=change_kb())
