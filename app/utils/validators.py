@@ -3,11 +3,8 @@ from datetime import datetime
 
 
 def is_valid_time_format(time_str: str) -> bool:
-    match = re.match(r"^(\d{1,2}):(\d{2})$", time_str)
-    if not match:
-        return False
-    hours, minutes = int(match.group(1)), int(match.group(2))
-    return 0 <= hours <= 23 and 0 <= minutes <= 59
+    match = re.match(r"^(?:[01]\d|2[0-3]):[0-5]\d$", time_str)
+    return bool(match)
 
 
 def is_valid_date_format(date_str: str) -> bool:
