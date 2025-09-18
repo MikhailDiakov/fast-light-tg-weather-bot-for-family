@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 BIRTHDAY_FILE = Path("birthdays.json")
@@ -11,8 +12,14 @@ def load_birthdays() -> list[dict]:
 
 
 def save_birthdays(data: list[dict]):
+    def sort_key(b):
+        dt = datetime.strptime(b["date"], "%d.%m.%Y")
+        return (dt.month, dt.day)
+
+    data_sorted = sorted(data, key=sort_key)
+
     BIRTHDAY_FILE.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(data_sorted, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
 
