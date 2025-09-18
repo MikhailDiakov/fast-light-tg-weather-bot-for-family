@@ -25,8 +25,8 @@ def setup_scheduler(bot):
     scheduler.add_job(
         send_morning_broadcast,
         "cron",
-        hour=12,
-        minute=15,
+        hour=9,
+        minute=0,
         timezone=KYIV_TZ,
         kwargs={"bot": bot},
     )
