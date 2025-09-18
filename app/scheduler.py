@@ -26,7 +26,7 @@ def setup_scheduler(bot):
         send_morning_broadcast,
         "cron",
         hour=12,
-        minute=5,
+        minute=15,
         timezone=KYIV_TZ,
         kwargs={"bot": bot},
     )
